@@ -1,3 +1,34 @@
+"""
+Author: Sammed Kamboj
+Date: April 16, 2023. 
+
+This script defines a fcn-resnet101 model changes the last layer to have 39 number of classes and trains it for 3 initial epochs. 
+If these epochs run without any error, we can run the script for as many epochs as we want using gpu parallel processing. 
+
+Desired output:
+
+input shape:  torch.Size([16, 3, 224, 224])
+Epoch [1/1], Step [1/6], Loss: 3.6787
+Epoch [1/1], Training Loss: 3.6787, Validation Loss: 3.3765
+input shape:  torch.Size([16, 3, 224, 224])
+Epoch [1/1], Step [2/6], Loss: 3.3525
+Epoch [1/1], Training Loss: 3.3525, Validation Loss: 3.0690
+input shape:  torch.Size([16, 3, 224, 224])
+Epoch [1/1], Step [3/6], Loss: 2.9794
+Epoch [1/1], Training Loss: 2.9794, Validation Loss: 2.8196
+input shape:  torch.Size([16, 3, 224, 224])
+Epoch [1/1], Step [4/6], Loss: 2.8010
+Epoch [1/1], Training Loss: 2.8010, Validation Loss: 2.6198
+input shape:  torch.Size([16, 3, 224, 224])
+Epoch [1/1], Step [5/6], Loss: 2.6370
+Epoch [1/1], Training Loss: 2.6370, Validation Loss: 2.5296
+input shape:  torch.Size([3, 3, 224, 224])
+Epoch [1/1], Step [6/6], Loss: 2.5030
+Epoch [1/1], Training Loss: 2.5030, Validation Loss: 2.3942
+
+"""
+
+#Import required librabries
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -28,7 +59,7 @@ dataloaders_dict = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Define hyperparameters
-num_epochs = 1
+num_epochs = 3
 batch_size = 16
 learning_rate = 0.001
 
@@ -36,7 +67,7 @@ learning_rate = 0.001
 model = models.segmentation.fcn_resnet101(pretrained=True, progress=True)
 # Modify model to output correct number of classes
 num_classes = 39
-#model.classifier = DeepLabHead(2048, num_classes)
+
 model.classifier = nn.Conv2d(2048, num_classes, kernel_size=(1, 1), stride=(1, 1))
 
 # Freeze the backbone layers
